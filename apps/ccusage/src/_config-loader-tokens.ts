@@ -98,6 +98,13 @@ function validateConfigJson(data: unknown): data is ConfigData {
 	) {
 		return false;
 	}
+	if (config.modelAliases != null) {
+		for (const value of Object.values(config.modelAliases as Record<string, unknown>)) {
+			if (typeof value !== 'string') {
+				return false;
+			}
+		}
+	}
 
 	return true;
 }

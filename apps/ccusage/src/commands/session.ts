@@ -58,6 +58,7 @@ export const sessionCommand = define({
 						jq: mergedOptions.jq,
 						timezone: mergedOptions.timezone,
 						locale: mergedOptions.locale ?? DEFAULT_LOCALE,
+						modelAliases: config?.modelAliases,
 					},
 				},
 				useJson,
