@@ -46,6 +46,7 @@ export type ConfigData = {
 	$schema?: string;
 	defaults?: Record<string, any>;
 	commands?: Record<string, Record<string, any>>;
+	modelAliases?: Record<string, string>;
 	source?: string;
 };
 
@@ -86,6 +87,14 @@ function validateConfigJson(data: unknown): data is ConfigData {
 	if (
 		config.commands != null &&
 		(typeof config.commands !== 'object' || config.commands === null)
+	) {
+		return false;
+	}
+
+	// Optional modelAliases property
+	if (
+		config.modelAliases != null &&
+		(typeof config.modelAliases !== 'object' || config.modelAliases === null)
 	) {
 		return false;
 	}

@@ -640,7 +640,10 @@ export async function calculateCostForEntry(
 		// Always calculate from tokens
 		if (data.message.model != null) {
 			return Result.unwrap(
-				fetcher.calculateCostFromTokens(data.message.usage, data.message.model),
+				fetcher.calculateCostFromTokens(
+					data.message.usage,
+					fetcher.resolveModel(data.message.model),
+				),
 				0,
 			);
 		}
@@ -655,7 +658,10 @@ export async function calculateCostForEntry(
 
 		if (data.message.model != null) {
 			return Result.unwrap(
-				fetcher.calculateCostFromTokens(data.message.usage, data.message.model),
+				fetcher.calculateCostFromTokens(
+					data.message.usage,
+					fetcher.resolveModel(data.message.model),
+				),
 				0,
 			);
 		}
@@ -738,6 +744,7 @@ export type LoadOptions = {
 	startOfWeek?: WeekDay; // Start of week for weekly aggregation
 	timezone?: string; // Timezone for date grouping (e.g., 'UTC', 'America/New_York'). Defaults to system timezone
 	locale?: string; // Locale for date/time formatting (e.g., 'en-US', 'ja-JP'). Defaults to 'en-US'
+	modelAliases?: Record<string, string>; // Model name aliases for pricing lookup (e.g., 'claude-sonnet-4.5' → 'claude-sonnet-4-5')
 } & DateFilter;
 
 /**
@@ -772,7 +779,8 @@ export async function loadDailyUsageData(options?: LoadOptions): Promise<DailyUs
 	const mode = options?.mode ?? 'auto';
 
 	// Use PricingFetcher with using statement for automatic cleanup
-	using fetcher = mode === 'display' ? null : new PricingFetcher(options?.offline);
+	using fetcher =
+		mode === 'display' ? null : new PricingFetcher(options?.offline, options?.modelAliases);
 
 	// Track processed message+request combinations for deduplication
 	const processedHashes = new Set<string>();
@@ -929,7 +937,8 @@ export async function loadSessionData(options?: LoadOptions): Promise<SessionUsa
 	const mode = options?.mode ?? 'auto';
 
 	// Use PricingFetcher with using statement for automatic cleanup
-	using fetcher = mode === 'display' ? null : new PricingFetcher(options?.offline);
+	using fetcher =
+		mode === 'display' ? null : new PricingFetcher(options?.offline, options?.modelAliases);
 
 	// Track processed message+request combinations for deduplication
 	const processedHashes = new Set<string>();
@@ -1112,11 +1121,12 @@ export async function loadWeeklyUsageData(options?: LoadOptions): Promise<Weekly
  * @param options - Options for loading data
  * @param options.mode - Cost calculation mode (auto, calculate, display)
  * @param options.offline - Whether to use offline pricing data
+ * @param options.modelAliases - Model name aliases for pricing lookup
  * @returns Usage data for the specific session or null if not found
  */
 export async function loadSessionUsageById(
 	sessionId: string,
-	options?: { mode?: CostMode; offline?: boolean },
+	options?: { mode?: CostMode; offline?: boolean; modelAliases?: Record<string, string> },
 ): Promise<{ totalCost: number; entries: UsageData[] } | null> {
 	const claudePaths = getClaudePaths();
 
@@ -1137,7 +1147,8 @@ export async function loadSessionUsageById(
 	}
 
 	const mode = options?.mode ?? 'auto';
-	using fetcher = mode === 'display' ? null : new PricingFetcher(options?.offline);
+	using fetcher =
+		mode === 'display' ? null : new PricingFetcher(options?.offline, options?.modelAliases);
 
 	const entries: UsageData[] = [];
 	let totalCost = 0;
@@ -1374,7 +1385,8 @@ export async function loadSessionBlockData(options?: LoadOptions): Promise<Sessi
 	const mode = options?.mode ?? 'auto';
 
 	// Use PricingFetcher with using statement for automatic cleanup
-	using fetcher = mode === 'display' ? null : new PricingFetcher(options?.offline);
+	using fetcher =
+		mode === 'display' ? null : new PricingFetcher(options?.offline, options?.modelAliases);
 
 	// Track processed message+request combinations for deduplication
 	const processedHashes = new Set<string>();

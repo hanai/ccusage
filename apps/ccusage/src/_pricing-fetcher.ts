@@ -13,14 +13,31 @@ const CLAUDE_PROVIDER_PREFIXES = [
 
 const PREFETCHED_CLAUDE_PRICING = prefetchClaudePricing();
 
+/**
+ * Built-in model name aliases for common mismatches between Claude Code and LiteLLM.
+ * Maps model names as emitted by Claude Code to their LiteLLM pricing database equivalents.
+ */
+const DEFAULT_MODEL_ALIASES: Record<string, string> = {
+	// Claude models with dot notation → hyphen notation (LiteLLM format)
+	'claude-sonnet-4.5': 'claude-sonnet-4-5',
+	'gemini-3-pro-high': 'gemini-3-pro-preview',
+};
+
 export class PricingFetcher extends LiteLLMPricingFetcher {
-	constructor(offline = false) {
+	readonly #aliases: Record<string, string>;
+
+	constructor(offline = false, aliases: Record<string, string> = {}) {
 		super({
 			offline,
 			offlineLoader: async () => PREFETCHED_CLAUDE_PRICING,
 			logger,
 			providerPrefixes: CLAUDE_PROVIDER_PREFIXES,
 		});
+		this.#aliases = { ...DEFAULT_MODEL_ALIASES, ...aliases };
+	}
+
+	resolveModel(modelName: string): string {
+		return this.#aliases[modelName] ?? modelName;
 	}
 }
 
@@ -45,6 +62,21 @@ if (import.meta.vitest != null) {
 			);
 
 			expect(cost).toBeGreaterThan(0);
+		});
+
+		it('resolves model aliases', () => {
+			using fetcher = new PricingFetcher(true);
+			// Default alias
+			expect(fetcher.resolveModel('claude-sonnet-4.5')).toBe('claude-sonnet-4-5');
+			// Unknown model passes through unchanged
+			expect(fetcher.resolveModel('claude-unknown-model')).toBe('claude-unknown-model');
+		});
+
+		it('merges user aliases with defaults, user aliases take precedence', () => {
+			using fetcher = new PricingFetcher(true, { 'my-model': 'claude-sonnet-4-20250514' });
+			expect(fetcher.resolveModel('my-model')).toBe('claude-sonnet-4-20250514');
+			// Default aliases still work
+			expect(fetcher.resolveModel('claude-sonnet-4.5')).toBe('claude-sonnet-4-5');
 		});
 	});
 }
