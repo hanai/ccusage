@@ -30,12 +30,12 @@
 	},
 	"dependencies": {},
 	"devDependencies": {
+		"@hanai/ccusage": "workspace:^",
 		"@ryoppippi/eslint-config": "catalog:lint",
 		"@ryoppippi/vite-plugin-cloudflare-redirect": "catalog:docs",
 		"@types/bun": "catalog:types",
 		"@types/react": "catalog:types",
 		"@typescript/native-preview": "catalog:types",
-		"ccusage": "workspace:^",
 		"eslint": "catalog:lint",
 		"eslint-plugin-format": "catalog:lint",
 		"tinyglobby": "catalog:runtime",
