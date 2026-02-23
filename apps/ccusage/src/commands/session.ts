@@ -58,6 +58,7 @@ export const sessionCommand = define({
 						jq: mergedOptions.jq,
 						timezone: mergedOptions.timezone,
 						locale: mergedOptions.locale ?? DEFAULT_LOCALE,
+						modelAliases: config?.modelAliases,
 					},
 				},
 				useJson,
@@ -72,6 +73,7 @@ export const sessionCommand = define({
 			offline: ctx.values.offline,
 			timezone: ctx.values.timezone,
 			locale: ctx.values.locale,
+			modelAliases: config?.modelAliases,
 		});
 
 		if (sessionData.length === 0) {
