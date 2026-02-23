@@ -142,7 +142,7 @@ export async function detectMismatches(claudePath?: string): Promise<MismatchSta
 
 				const model = data.message.model;
 				const calculatedCost = await Result.unwrap(
-					fetcher.calculateCostFromTokens(data.message.usage, model),
+					fetcher.calculateCostFromTokens(data.message.usage, fetcher.resolveModel(model)),
 				);
 
 				// Only compare if we could calculate a cost

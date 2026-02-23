@@ -78,6 +78,7 @@ export const dailyCommand = define({
 		const dailyData = await loadDailyUsageData({
 			...mergedOptions,
 			groupByProject: mergedOptions.instances,
+			modelAliases: config?.modelAliases,
 		});
 
 		if (dailyData.length === 0) {

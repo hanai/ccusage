@@ -34,7 +34,10 @@ export const monthlyCommand = define({
 			logger.level = 0;
 		}
 
-		const monthlyData = await loadMonthlyUsageData(mergedOptions);
+		const monthlyData = await loadMonthlyUsageData({
+			...mergedOptions,
+			modelAliases: config?.modelAliases,
+		});
 
 		if (monthlyData.length === 0) {
 			if (useJson) {
