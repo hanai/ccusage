@@ -1,19 +1,18 @@
 {
-	"name": "ccusage",
+	"name": "@hanai/ccusage",
 	"type": "module",
 	"version": "18.0.5",
 	"description": "Usage analysis tool for Claude Code",
-	"author": "ryoppippi",
+	"author": "hanai",
 	"license": "MIT",
-	"funding": "https://github.com/ryoppippi/ccusage?sponsor=1",
-	"homepage": "https://github.com/ryoppippi/ccusage#readme",
+	"homepage": "https://github.com/hanai/ccusage#readme",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/ryoppippi/ccusage.git",
+		"url": "git+https://github.com/hanai/ccusage.git",
 		"directory": "apps/ccusage"
 	},
 	"bugs": {
-		"url": "https://github.com/ryoppippi/ccusage/issues"
+		"url": "https://github.com/hanai/ccusage/issues"
 	},
 	"exports": {
 		".": "./src/index.ts",
