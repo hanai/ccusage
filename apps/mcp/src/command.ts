@@ -1,8 +1,8 @@
-import type { LoadOptions } from 'ccusage/data-loader';
+import type { LoadOptions } from '@hanai/ccusage/data-loader';
 import process from 'node:process';
+import { getClaudePaths } from '@hanai/ccusage/data-loader';
+import { logger } from '@hanai/ccusage/logger';
 import { serve } from '@hono/node-server';
-import { getClaudePaths } from 'ccusage/data-loader';
-import { logger } from 'ccusage/logger';
 import { cli, define } from 'gunshi';
 import { description, name, version } from '../package.json';
 import { createMcpHttpApp, createMcpServer, startMcpServerStdio } from './mcp.ts';
