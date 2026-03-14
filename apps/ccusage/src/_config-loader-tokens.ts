@@ -418,6 +418,7 @@ if (import.meta.vitest != null) {
 
 		afterEach(() => {
 			vi.restoreAllMocks();
+			vi.unstubAllEnvs();
 		});
 
 		it('should load valid configuration from .ccusage/ccusage.json', async () => {
@@ -456,9 +457,11 @@ if (import.meta.vitest != null) {
 			expect(config).toBeUndefined();
 		});
 
-		it('should return undefined when no config files exist in search paths', () => {
+		it('should return undefined when no config files exist in search paths', async () => {
+			await using emptyClaudeFixture = await createFixture({ projects: {} });
 			// Mock process.cwd to return a directory without config files
 			vi.spyOn(process, 'cwd').mockReturnValue('/tmp/empty-dir');
+			vi.stubEnv('CLAUDE_CONFIG_DIR', emptyClaudeFixture.getPath());
 
 			const config = loadConfig();
 			expect(config).toBeUndefined();
@@ -468,8 +471,10 @@ if (import.meta.vitest != null) {
 			await using fixture = await createFixture({
 				'.ccusage/ccusage.json': '{ invalid json }',
 			});
+			await using emptyClaudeFixture = await createFixture({ projects: {} });
 
 			vi.spyOn(process, 'cwd').mockReturnValue(fixture.getPath());
+			vi.stubEnv('CLAUDE_CONFIG_DIR', emptyClaudeFixture.getPath());
 
 			const config = loadConfig();
 			expect(config).toBeUndefined();
@@ -510,12 +515,12 @@ if (import.meta.vitest != null) {
 			await using fixture2 = await createFixture({
 				'no-ccusage-dir': '',
 			});
+			await using emptyClaudeFixture = await createFixture({ projects: {} });
 
 			vi.spyOn(process, 'cwd').mockReturnValue(fixture2.getPath());
+			vi.stubEnv('CLAUDE_CONFIG_DIR', emptyClaudeFixture.getPath());
 
 			const config2 = loadConfig();
-			// Since we can't easily mock getClaudePaths, this test verifies the logic
-			// In real implementation, first available config would be loaded
 			expect(config2).toBeUndefined(); // No local .ccusage and no real Claude paths
 		});
 
@@ -556,8 +561,10 @@ if (import.meta.vitest != null) {
 					commands: { daily: { instances: true } },
 				}),
 			});
+			await using emptyClaudeFixture = await createFixture({ projects: {} });
 
 			vi.spyOn(process, 'cwd').mockReturnValue(fixture.getPath());
+			vi.stubEnv('CLAUDE_CONFIG_DIR', emptyClaudeFixture.getPath());
 
 			const config = loadConfig();
 			expect(config).toBeUndefined();
@@ -779,6 +786,7 @@ if (import.meta.vitest != null) {
 
 		afterEach(() => {
 			vi.restoreAllMocks();
+			vi.unstubAllEnvs();
 		});
 
 		describe('loadConfig with debug', () => {
@@ -818,8 +826,10 @@ if (import.meta.vitest != null) {
 				await using fixture = await createFixture({
 					'no-config-here': '',
 				});
+				await using emptyClaudeFixture = await createFixture({ projects: {} });
 
 				vi.spyOn(process, 'cwd').mockReturnValue(fixture.getPath());
+				vi.stubEnv('CLAUDE_CONFIG_DIR', emptyClaudeFixture.getPath());
 
 				const config = loadConfig(undefined, true);
 
